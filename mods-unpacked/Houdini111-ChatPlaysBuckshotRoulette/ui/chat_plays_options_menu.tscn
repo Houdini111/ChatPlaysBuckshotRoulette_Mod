@@ -1,0 +1,198 @@
+[gd_scene load_steps=4 format=3 uid="uid://bllsdaolyf11e"]
+
+[ext_resource type="Theme" uid="uid://j8n3fbgg806i" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/menuTheme.tres" id="1_avqhy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_42v0s"]
+bg_color = Color(0.203922, 0.203922, 0.203922, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0cpor"]
+bg_color = Color(0.12549, 0.12549, 0.12549, 1)
+
+[node name="chat plays options select" type="Control"]
+top_level = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_avqhy")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.65
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+mouse_filter = 2
+
+[node name="layout_root" type="GridContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -125.5
+offset_bottom = 125.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/h_separation = 15
+columns = 2
+
+[node name="ChannelNameLabel" type="Label" parent="Panel/layout_root"]
+layout_mode = 2
+text = "Channel Name"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ChannelName" type="LineEdit" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+context_menu_enabled = false
+caret_blink = true
+
+[node name="BotAuthorizedInput" type="HBoxContainer" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="BotAuthLabel" type="Label" parent="Panel/layout_root/BotAuthorizedInput"]
+layout_mode = 2
+text = "Bot Authorized"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="BotAuthorizedCheckbox" type="CheckBox" parent="Panel/layout_root/BotAuthorizedInput"]
+layout_mode = 2
+size_flags_horizontal = 0
+focus_mode = 0
+disabled = true
+button_mask = 0
+flat = true
+clip_text = true
+
+[node name="BeginBotAuthButton" type="Button" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "AUTHORIZE"
+
+[node name="DefaultNameLabel" type="Label" parent="Panel/layout_root"]
+layout_mode = 2
+text = "Default Name"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="DefaultName" type="LineEdit" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+focus_neighbor_bottom = NodePath("../ActionVotePeriod")
+text = "CHAT"
+max_length = 6
+context_menu_enabled = false
+caret_blink = true
+
+[node name="ActionVotePeriodLabel" type="Label" parent="Panel/layout_root"]
+layout_mode = 2
+text = "Action Vote Period (s)"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="ActionVotePeriod" type="SpinBox" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+focus_neighbor_top = NodePath("../DefaultName")
+focus_neighbor_bottom = NodePath("../InstructionsCooldown")
+max_value = 999.0
+
+[node name="InstructionsCooldownLabel" type="Label" parent="Panel/layout_root"]
+layout_mode = 2
+text = "Instructions Cooldown (s)"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="InstructionsCooldown" type="SpinBox" parent="Panel/layout_root"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+focus_neighbor_top = NodePath("../ActionVotePeriod")
+focus_neighbor_bottom = NodePath("../../../Bottom Buttons/Save")
+max_value = 999.0
+
+[node name="Bottom Buttons" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.4
+anchor_top = 0.975
+anchor_right = 0.6
+anchor_bottom = 0.975
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Save" type="Button" parent="Bottom Buttons"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../../Panel/layout_root/InstructionsCooldown")
+focus_neighbor_bottom = NodePath("../Return")
+text = "Save"
+
+[node name="Return" type="Button" parent="Bottom Buttons"]
+layout_mode = 2
+focus_neighbor_top = NodePath("../Save")
+text = "Return"
+
+[node name="User Code Panel" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.025
+anchor_top = 0.025
+anchor_right = 0.975
+anchor_bottom = 0.975
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_42v0s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="User Code Panel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="InstructionsLabel" type="Label" parent="User Code Panel/VBoxContainer"]
+layout_mode = 2
+text = "Please check your browser for the new twitch tab
+Verify code below matches then click \"Activate\" and then \"Authorize\""
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="User Code Label" type="Label" parent="User Code Panel/VBoxContainer"]
+layout_mode = 2
+text = "FAKE-CODE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BG" type="Panel" parent="User Code Panel/VBoxContainer/User Code Label"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0cpor")

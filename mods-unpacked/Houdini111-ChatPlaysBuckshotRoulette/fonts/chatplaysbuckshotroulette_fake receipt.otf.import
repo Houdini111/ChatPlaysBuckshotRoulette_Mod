@@ -1,0 +1,33 @@
+[remap]
+
+importer="font_data_dynamic"
+type="FontFile"
+uid="uid://vhj3kkn6yn8o"
+path="res://.godot/imported/chatplaysbuckshotroulette_fake receipt.otf-c6e6890c2e677a13754938e8b98c1f7d.fontdata"
+
+[deps]
+
+source_file="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/fonts/chatplaysbuckshotroulette_fake receipt.otf"
+dest_files=["res://.godot/imported/chatplaysbuckshotroulette_fake receipt.otf-c6e6890c2e677a13754938e8b98c1f7d.fontdata"]
+
+[params]
+
+Rendering=null
+antialiasing=1
+generate_mipmaps=false
+multichannel_signed_distance_field=false
+msdf_pixel_range=8
+msdf_size=48
+allow_system_fallback=false
+force_autohinter=false
+hinting=1
+subpixel_positioning=1
+oversampling=0.0
+Fallbacks=null
+fallbacks=[Resource("res://fonts/fonts language/NotoSansKR-Regular.ttf"), Resource("res://fonts/fonts language/NotoSansKR-Regular_korean_new.ttf"), Resource("res://fonts/fonts language/NotoSansJP-Regular_japanese_new.ttf"), Resource("res://fonts/fonts language/NotoSansSC-Regular_simplified chinese_new.ttf"), Resource("res://fonts/fonts language/NotoSansSC-Regular_simplified chinese_new.ttf"), Resource("res://fonts/fonts language/NotoSans-Regular_new.ttf"), Resource("res://fonts/Fake Receipt Cyr Ver2_2.ttf")]
+Compress=null
+compress=true
+preload=[]
+language_support={}
+script_support={}
+opentype_features={}

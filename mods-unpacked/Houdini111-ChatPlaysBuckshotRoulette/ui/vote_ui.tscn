@@ -1,0 +1,230 @@
+[gd_scene load_steps=4 format=3 uid="uid://3c2p6j5mboev"]
+
+[ext_resource type="Theme" uid="uid://j8n3fbgg806i" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/menuTheme.tres" id="1_v73ab"]
+[ext_resource type="Script" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/ui/CircleSliceTimer.gd" id="2_br18x"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hnwpj"]
+
+[node name="vote_ui" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_v73ab")
+
+[node name="Right Pane" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -350.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Root VBox" type="VBoxContainer" parent="Right Pane"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.02
+anchor_top = 0.02
+anchor_right = 0.98
+anchor_bottom = 0.98
+offset_left = 0.1
+offset_top = 0.2
+offset_bottom = -0.200012
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Name Vote Options" type="Label" parent="Right Pane/Root VBox"]
+layout_mode = 2
+text = "Name Leaderboard"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Divider" type="Label" parent="Right Pane/Root VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "---------------------------------------------------------"
+horizontal_alignment = 2
+
+[node name="NameList" type="VBoxContainer" parent="Right Pane/Root VBox"]
+clip_contents = true
+layout_mode = 2
+
+[node name="Left Pane" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_bottom = 1.0
+offset_right = 600.0
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_hnwpj")
+
+[node name="Root VBox" type="VBoxContainer" parent="Left Pane"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Left Pane/Root VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Left Pane/Root VBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
+text = "Actions Options"
+vertical_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Left Pane/Root VBox/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="Left Pane/Root VBox/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment_horizontal = 0
+
+[node name="VoteCountdownCircle" type="Control" parent="Left Pane/Root VBox/HBoxContainer/AspectRatioContainer"]
+layout_mode = 2
+script = ExtResource("2_br18x")
+
+[node name="Divider" type="Label" parent="Left Pane/Root VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "-------------------------------------------------------"
+
+[node name="ActionList" type="GridContainer" parent="Left Pane/Root VBox"]
+layout_mode = 2
+columns = 3
+
+[node name="KeyNum1" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "1 |"
+
+[node name="ActionDisplayName1" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent1" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum2" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "2 |"
+
+[node name="ActionDisplayName2" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent2" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum3" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "3 |"
+
+[node name="ActionDisplayName3" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent3" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum4" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "4 |"
+
+[node name="ActionDisplayName4" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent4" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum5" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "5 |"
+
+[node name="ActionDisplayName5" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent5" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum6" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "6 |"
+
+[node name="ActionDisplayName6" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent6" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum7" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "7 |"
+
+[node name="ActionDisplayName7" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent7" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum8" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "8 |"
+
+[node name="ActionDisplayName8" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent8" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum9" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "9 |"
+
+[node name="ActionDisplayName9" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent9" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"
+
+[node name="KeyNum10" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "10|"
+
+[node name="ActionDisplayName10" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "TestAction"
+
+[node name="Percent10" type="Label" parent="Left Pane/Root VBox/ActionList"]
+layout_mode = 2
+text = "| 100%"

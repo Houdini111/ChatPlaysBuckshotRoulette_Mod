@@ -1,0 +1,23 @@
+[gd_resource type="Theme" load_steps=7 format=3 uid="uid://j8n3fbgg806i"]
+
+[ext_resource type="Texture2D" uid="uid://dsf47wm47vdgm" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/checkbox_enabled_checked.png" id="1_1vxe6"]
+[ext_resource type="FontFile" uid="uid://vhj3kkn6yn8o" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/fonts/fake receipt.otf" id="1_iewfp"]
+[ext_resource type="Texture2D" uid="uid://c63me54bl6ahw" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/checkbox_enabled_unchecked.png" id="2_kqlb8"]
+[ext_resource type="Texture2D" uid="uid://b7ghxtjj0nh6a" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/checkbox_disabled_checked.png" id="2_poaxe"]
+[ext_resource type="Texture2D" uid="uid://c683e0f5oyp8m" path="res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/themes/checkbox_disabled_unchecked.png" id="4_lnrd8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pr56o"]
+
+[resource]
+default_font = ExtResource("1_iewfp")
+default_font_size = 26
+CheckBox/icons/checked = ExtResource("1_1vxe6")
+CheckBox/icons/checked_disabled = ExtResource("2_poaxe")
+CheckBox/icons/unchecked = ExtResource("2_kqlb8")
+CheckBox/icons/unchecked_disabled = ExtResource("4_lnrd8")
+Label/colors/font_outline_color = Color(0, 0, 0, 1)
+Label/constants/outline_size = 16
+Label/font_sizes/font_size = 28
+MediumLabel/base_type = &"Label"
+MediumLabel/font_sizes/font_size = 22
+Panel/styles/panel = SubResource("StyleBoxEmpty_pr56o")

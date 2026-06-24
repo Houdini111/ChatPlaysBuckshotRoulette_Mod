@@ -1,0 +1,54 @@
+{
+	"name": "ChatPlaysBuckshotRoulette",
+	"namespace": "Houdini111",
+	"version_number": "1.0.0",
+	"description": "A mod to add twitch chat integration",
+	"website_url": "https://github.com/Houdini111/ChatPlaysBuckshotRoulette",
+	"dependencies": [],
+	"extra": {
+		"godot": {
+			"authors": ["Houdini111"],
+			"description_rich": "",
+			"optional_dependencies": [],
+			"load_before": [],
+			"incompatibilities": [],
+			"compatible_mod_loader_version": ["7.0.1"],
+			"compatible_game_version": ["2.2.0.6"],
+			"config_schema": {
+				"title": "Config",
+				"description": "Config for ChatPlaysBuckshotRoulette",
+				"type": "object",
+				"properties": {
+					"channel": {
+						"title": "The channel the bot will read and chat in",
+						"type": "string",
+						"default": ""
+					},
+					"secret": {
+						"title": "The bearer token the bot will use to log in to Twitch",
+						"type": "string",
+						"default": ""
+					},
+					"defaultName": {
+						"title": "The name ChatPlaysBuckshotRoulette will enter in game when prompted",
+						"type": "string",
+						"default": "CHAT",
+						"maxLength": 6
+					},
+					"actionVotePeriod": {
+						"title": "How long chat will have to vote before an action occurs",
+						"type": "integer",
+						"default": 15,
+						"mininum": 0
+					},
+					"instructionsCooldown": {
+						"title": "How long the bot will ignore !instructions for after a use",
+						"type": "integer",
+						"default": 15,
+						"mininum": 0
+					}
+				}
+			}
+		}
+	}
+}
