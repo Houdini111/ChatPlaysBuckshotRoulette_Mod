@@ -10,6 +10,8 @@ const TWITCH_USERS_ENDPOINT = "https://api.twitch.tv/helix/users"
 
 const HttpClientWrapper = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/twitch/HttpClientWrapper.gd")
 const SecretsManager = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/twitch/SecretsManager.gd")
+const TwitchEndpointWrapper = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/twitch/TwitchEndpointWrapper.gd")
+const ChatPlaysOptionsMenu = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulette/ui/options_menu.gd")
 
 var secrets_manager: SecretsManager
 var twitch_endpoint_wrapper: TwitchEndpointWrapper
