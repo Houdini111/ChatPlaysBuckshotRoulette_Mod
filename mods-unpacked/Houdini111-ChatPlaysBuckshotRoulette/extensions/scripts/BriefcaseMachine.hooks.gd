@@ -8,6 +8,8 @@ const LOGNAME = "ChatPlaysBuckshotRoulette:BreifcaseMachineHook"
 
 var game_runner: GameRunner
 
+var enabled := false
+
 func _init(_game_runner: GameRunner):
 	self.game_runner = _game_runner
 	ModLoaderMod.add_hook(MainRoutine, HOOK_TARGET, "MainRoutine")
@@ -15,8 +17,10 @@ func _init(_game_runner: GameRunner):
 	
 func MainRoutine(chain: ModLoaderHookChain):
 	await chain.execute_next_async()
-	game_runner.HandleBreifcase()
+	if enabled:
+		game_runner.HandleBreifcase()
 	
 func CheckLatches(chain: ModLoaderHookChain):
 	await chain.execute_next_async()
-	game_runner.CheckLatches()
+	if enabled:
+		game_runner.CheckLatches()

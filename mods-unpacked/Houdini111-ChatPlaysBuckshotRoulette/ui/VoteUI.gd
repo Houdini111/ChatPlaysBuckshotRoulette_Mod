@@ -20,6 +20,8 @@ var name_list_node: Node
 var name_entry_nodes: Dictionary
 var vote_countdown_circle: CircleSliceTimer
 
+var enabled: bool = false
+
 func _init():
 	self.name = "VoteUI"
 	action_num_labels = {}
@@ -32,6 +34,14 @@ func _init():
 	vote_ui_root.name = "VoteUI Interface"
 	add_child.call_deferred(vote_ui_root)
 
+func Disable() -> void:
+	self.enabled = false
+	self.visible = false
+
+func Enable() -> void:
+	self.enabled = true
+	self.visible = true
+
 func _ready():
 	_LocateElements()
 	_PurgePlaceholderData()
@@ -39,7 +49,10 @@ func _ready():
 	CloseActionVoting()
 
 func OpenActionVoting(choices: Array[VotingChoice], duration: float):
-	ModLoaderLog.warning("Opening action voting for %s choices" % choices.size(), LOGNAME)
+	ModLoaderLog.info("Opening action voting for %s choices" % choices.size(), LOGNAME)
+	if !enabled:
+		ModLoaderLog.info("VoteUI disabled. Ignoring", LOGNAME)
+		return
 	var untouched_rows: Array = range(10).map(func(val): return str(val+1))
 	for choice in choices:
 		_UpdateActionLeaderboardEntry(choice.voting_key, choice.display_name, 0)
@@ -50,15 +63,22 @@ func OpenActionVoting(choices: Array[VotingChoice], duration: float):
 	left_pane_node.visible = true
 
 func CloseActionVoting():
+	ModLoaderLog.info("VoteUI closing action voting", LOGNAME)
 	left_pane_node.visible = false
 
 func ShowNameVoting():
+	ModLoaderLog.info("VoteUI showing name voting", LOGNAME)
+	if !enabled:
+		ModLoaderLog.info("VoteUI disabled. Ignoring", LOGNAME)
+		return
 	right_pane_node.visible = true
 
 func HideNameVoting():
+	ModLoaderLog.info("VoteUI hiding name voting", LOGNAME)
 	right_pane_node.visible = false
 
 func ClearNameEntries():
+	ModLoaderLog.info("VoteUI clearing name entries", LOGNAME)
 	for key in name_entry_nodes.keys():
 		var node = name_entry_nodes.get(key) as Node
 		node.queue_free()
@@ -84,6 +104,10 @@ func _PurgePlaceholderData():
 		_UpdateActionLeaderboardEntry(str(i+1), "", 0)
 		
 func UpdateNameLeaderboard(name_entries: Array[LeaderboardEntry]): 
+	#ModLoaderLog.debug("VoteUI updating name leaderboard", LOGNAME)
+	if !enabled:
+		ModLoaderLog.info("VoteUI disabled not updating name leaderboard", LOGNAME)
+		return
 	if !right_pane_node.visible:
 		return
 #	ModLoaderLog.debug("Updating name leaderboard", LOGNAME)
@@ -105,6 +129,9 @@ func UpdateNameLeaderboard(name_entries: Array[LeaderboardEntry]):
 		sort_ind += 1
 		
 func UpdateActionLeaderboard(action_entries: Array[ActionLeaderboardEntry]): 
+	if !enabled:
+		ModLoaderLog.info("VoteUI disabled. Ignoring", LOGNAME)
+		return
 	if !left_pane_node.visible:
 		return
 #	ModLoaderLog.debug("Updating action leaderboard", LOGNAME)

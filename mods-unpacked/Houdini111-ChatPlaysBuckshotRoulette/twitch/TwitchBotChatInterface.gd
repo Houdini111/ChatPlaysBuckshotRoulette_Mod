@@ -66,9 +66,13 @@ func _process(delta):
 		set_process(false) 
 			
 func StartWebsocketClient(_bot_user_id: String, _channel_user_id: String, socket_url: String = EVENTSUB_WEBSOCKET_URL):
+	# TODO: Check if already connected before trying again
 	ModLoaderLog.info("Starting websocket client", LOGNAME)
 	self.bot_user_id = _bot_user_id
 	self.channel_user_id = _channel_user_id
+	if (self.bot_user_id == null || self.bot_user_id == "" || self.channel_user_id == null || self.channel_user_id == ""):
+		ModLoaderLog.error("Cannot start websocket. Missing user IDs. IDs (bot, channel): [%s, %s]" % [self.bot_user_id, self.channel_user_id], LOGNAME)
+		return
 	var socket_code = web_socket.connect_to_url(socket_url)
 	if socket_code != OK:
 		ModLoaderLog.error("Failed to connect to websocket: %s" % error_string(socket_code), LOGNAME)
@@ -103,10 +107,12 @@ func _SocketMessage(message):
 		"notification":
 			_HandleChatMessage(metadata, payload)
 		"session_reconnect":
+			ModLoaderLog.error("Twitch requested session reconnect. Not currently handled", LOGNAME)
 			var new_socket_url = payload.session.reconnect_url
 			# TODO: Switch to new socket URL
 			pass
 		"revocation":
+			ModLoaderLog.error("Twitch revoking websocket connection. Closing", LOGNAME)
 			CloseWebsocketClient()
 		_:
 			ModLoaderLog.warning("Unknown and unhandled socket message type [%s]" % metadata.message_type, LOGNAME)
@@ -130,6 +136,9 @@ func _HandleChatMessage(metadata: Dictionary, payload: Dictionary):
 	
 func _RegisterEventSubListeners():
 	ModLoaderLog.info("Attempting to register event sub listener with websocket", LOGNAME)
+	if (self.bot_user_id == null || self.bot_user_id == "" || self.channel_user_id == null || self.channel_user_id == ""):
+		ModLoaderLog.error("Attempting to register event sub listeners but missing user IDs. IDs (bot, channel): [%s, %s]" % [self.bot_user_id, self.channel_user_id], LOGNAME)
+		return
 	var event_sub_type = "channel.chat.message"
 	var headers = [
 		"Authorization: Bearer %s" % auth.GetAccessToken(),

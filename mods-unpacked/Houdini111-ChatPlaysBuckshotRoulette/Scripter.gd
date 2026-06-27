@@ -13,19 +13,32 @@ var intro_manager: IntroManager
 var signature_manager: Signature
 var interaction_manager: InteractionManager
 var waiver_button_interaction_branches := {}
-var test
+var dealer_name_label: Label3D
+
+var enabled: bool = false
 
 func _init(_mod_main: ChatPlaysModMain, _twitch_bot: TwitchBot): 
 	self.mod_main = _mod_main
 	self.twitch_bot = _twitch_bot
 
+func Disable() -> void:
+	self.enabled = false
+
+func Enable() -> void:
+	self.enabled = true
+
+# TODO: Make option of automated game handling outside of decisions. One for Chat vs Dealer, one for Streamer vs Chat
+
 func HandleSceneChange(scene_root: Node):
-	test = scene_root
 	ModLoaderLog.info("Scripter handling scene change", LOGNAME)
+	if !enabled: 
+		ModLoaderLog.info("Scripter disabled. Ignoring", LOGNAME)
+		return
 	if (scene_root.name == "main"):
 		intro_manager = scene_root.find_child("intro manager") as IntroManager
 		signature_manager = scene_root.find_child("signature manager") as Signature
 		interaction_manager = scene_root.find_child("interaction manager") as InteractionManager
+		dealer_name_label = scene_root.find_child("text_dealer") as Label3D
 		
 		FindWaiverButtons(scene_root)
 	
@@ -35,6 +48,9 @@ func HandleSceneChange(scene_root: Node):
 			StartGameFromBathroom()
 	
 func FindWaiverButtons(scene_root):
+	if !enabled: 
+		ModLoaderLog.info("Scripter disabled. Ignoring", LOGNAME)
+		return
 	var waiver_buttons_root = scene_root.find_child("signature machine main parent").find_child("button colliders parent") as Node
 	for letter in ALPHABET:
 		var interaction_branch = waiver_buttons_root.find_child("interaction branch_%s" % letter) as InteractionBranch
@@ -45,6 +61,9 @@ func FindWaiverButtons(scene_root):
 	waiver_button_interaction_branches["enter"] = interaction_branch_enter
 	
 func StartGameFromBathroom():
+	if !enabled: 
+		ModLoaderLog.info("Scripter disabled. Ignoring", LOGNAME)
+		return
 	ModLoaderLog.info("Bathroom loading cutscene complete", LOGNAME)
 	if (!intro_manager.allowingPills):
 		ModLoaderLog.info("Endless mode NOT allowed. No automation will happen", LOGNAME)
@@ -60,17 +79,23 @@ func StartGameFromBathroom():
 	# Next is waiting for a hook trigger from SignatureManager.AwaitPickup, which will call PickupWaiverAndEnterName
 	
 func PickupWaiverAndEnterName():
+	if !enabled: 
+		ModLoaderLog.info("Scripter disabled. Ignoring", LOGNAME)
+		return
 	ModLoaderLog.info("Now in back room. Picking up waiver", LOGNAME)
 	await signature_manager.PickUpWaiver()
-	ModLoaderLog.info("Waiver picked up. Finding player name", LOGNAME)
-	var settings = ModLoaderConfig.get_current_config(mod_main.MOD_ID)
-	var default_name: String = settings.data["defaultName"]
-	var voted_name := twitch_bot.GetVotedName()
-	var player_name = voted_name if voted_name != null && voted_name != "" else default_name
-	ModLoaderLog.info("Using player name %s" % player_name, LOGNAME)
-	await EnterName(player_name)
+	if mod_main.game_mode == mod_main.GAME_MODE.CHAT_VS_DEALER:
+		ModLoaderLog.info("Waiver picked up. Finding player name", LOGNAME)
+		var settings = ModLoaderConfig.get_current_config(mod_main.MOD_ID)
+		var default_name: String = settings.data["defaultName"]
+		var voted_name := twitch_bot.GetVotedName()
+		var player_name = voted_name if voted_name != null && voted_name != "" else default_name
+		ModLoaderLog.info("Using player name %s" % player_name, LOGNAME)
+		await _EnterName(player_name)
+	elif mod_main.game_mode == mod_main.GAME_MODE.STREAMER_VS_CHAT:
+		ModLoaderLog.info("Waiver picked up. Waiting for streamer to enter name", LOGNAME)
 	
-func EnterName(player_name: String):
+func _EnterName(player_name: String):
 	# Could go directly to signature_manager.Input_Letter or signature_manager.GetInput and the like
 	#  but then the sound and animation would be skipped
 	for letter in player_name:
@@ -93,3 +118,15 @@ func EnterName(player_name: String):
 	
 	interaction_manager.activeInteractionBranch = waiver_button_interaction_branches["enter"]
 	await interaction_manager.InteractWith("signature machine button")
+
+func WaiverNameEntered() -> void:
+	ModLoaderLog.info("Waiver name has been entered", LOGNAME)
+	if mod_main.game_mode == mod_main.GAME_MODE.STREAMER_VS_CHAT:
+		ModLoaderLog.info("Playing against chat. Getting chat name for dealer", LOGNAME)
+		var settings = ModLoaderConfig.get_current_config(mod_main.MOD_ID)
+		var default_name: String = settings.data["defaultName"]
+		var voted_name := twitch_bot.GetVotedName()
+		var dealer_name = voted_name if voted_name != null && voted_name != "" else default_name
+		dealer_name = dealer_name.to_upper()
+		ModLoaderLog.info("Going with dealer name '%s'" % dealer_name, LOGNAME)
+		dealer_name_label.text = dealer_name

@@ -11,15 +11,14 @@ const Scripter = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulet
 
 var scripter: Scripter
 
+var enabled := false
+
 func _init(_scripter: Scripter) -> void:
 	self.scripter = _scripter
 	ModLoaderMod.add_hook(MainBathroomStart, HOOK_TARGET, "MainBathroomStart")
 
-#func _init() -> void:
-##	self.scripter = _scripter
-#	ModLoaderMod.add_hook(MainBathroomStart, HOOK_TARGET, "MainBathroomStart")
-
 func MainBathroomStart(chain: ModLoaderHookChain):
 	ModLoaderLog.info("IntroManager MainBathroom Start hook triggered", LOGNAME)
 	await chain.execute_next_async()
-	scripter.StartGameFromBathroom()
+	if enabled:
+		scripter.StartGameFromBathroom()

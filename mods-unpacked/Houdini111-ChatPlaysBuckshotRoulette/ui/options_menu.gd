@@ -9,6 +9,7 @@ var mod_main
 var bot: TwitchBot
 var menu_scene_root: Node
 var menu_root: Node
+var main_options_select: Node
 var sub_options_select: Node
 var menu_manager: MenuManager
 var chat_plays_menu_node: Node
@@ -70,11 +71,12 @@ func MakeMenuModifications(current_scene: Node) -> void:
 	menu_scene_root = current_scene
 	menu_root = current_scene.find_child("menu ui");
 	if (menu_root != null):
+		main_options_select = menu_root.find_child("main screen")
 		sub_options_select = menu_root.find_child("sub options select");
 
-	ModLoaderLog.debug("menu_root found: %s. sub_options_select found: %s" % [menu_root != null, sub_options_select != null], LOGNAME)
+	ModLoaderLog.debug("menu_root found: %s. main_options_select found: %s  sub_options_select found: %s" % [menu_root != null, main_options_select != null, sub_options_select != null], LOGNAME)
 	# Ready to begin instantiation
-	if sub_options_select != null:
+	if main_options_select != null && sub_options_select != null:
 		do_options_menu_init(current_scene)
 			
 func ShowUserCodePopup(user_code: String) -> void:
@@ -88,6 +90,7 @@ func do_options_menu_init(current_scene: Node) -> void:
 	ModLoaderLog.info("Doing options menu init", LOGNAME)
 	locate_sounds()
 	locate_managers()
+	inject_main_menu_options()
 	inject_chat_plays_option()
 	create_chat_plays_menu(current_scene)
 	
@@ -109,6 +112,135 @@ func locate_managers() -> void:
 	menu_manager = menu_scene_root.find_child("menu manager") as MenuManager;
 	cursor_manager = menu_scene_root.find_child("cursor manager") as CursorManager;
 
+func inject_main_menu_options() -> void:
+	ModLoaderLog.info("Modifying main menu to include Chat Plays options", LOGNAME)
+	var start_visual_node := main_options_select.find_child("button_start") as Label
+	var multiplayer_visual_node := main_options_select.find_child("button_multiplayer") as Label
+	var options_visual_node := main_options_select.find_child("button_options") as Label
+	var credits_visual_node := main_options_select.find_child("button_credits") as Label
+	var exit_visual_node := main_options_select.find_child("button_exit") as Label
+	
+	var visual_nodes = [start_visual_node, multiplayer_visual_node, options_visual_node, credits_visual_node, exit_visual_node]
+	var nodes_found = visual_nodes.map(func(node): return node != null)
+	if nodes_found.any(func(found): return !found):
+		ModLoaderLog.error("Failed to find main menu options, %s" % JSON.stringify(nodes_found), LOGNAME)
+		return
+		
+	var start_true_button := main_options_select.find_child("true button_start") as Button
+	var multiplayer_true_button := main_options_select.find_child("true button_multiplayer") as Button
+	var options_true_button := main_options_select.find_child("true button_options") as Button
+	var credits_true_button := main_options_select.find_child("true button_credits") as Button
+	var exit_true_button := main_options_select.find_child("true button_exit") as Button
+	
+	var true_buttons = [start_true_button, multiplayer_true_button, options_true_button, credits_true_button, exit_true_button]
+	var buttons_found = true_buttons.map(func(node): return node != null)
+	if buttons_found.any(func(found): return !found):
+		ModLoaderLog.error("Failed to find main menu buttons, %s" % JSON.stringify(buttons_found), LOGNAME)
+		return
+		
+	var start_button_class = start_true_button.get_child(0) as ButtonClass
+	var multiplayer_button_class = multiplayer_true_button.get_child(0) as ButtonClass
+	var options_button_class = options_true_button.get_child(0) as ButtonClass
+	var credits_button_class = credits_true_button.get_child(0) as ButtonClass
+	var exit_button_class = exit_true_button.get_child(0) as ButtonClass
+		
+	
+	start_visual_node.set_text("START VANILLA")
+	var start_size = start_true_button.get_size()
+	# I wish there was a more programatic way of setting these but I can't find a good one
+	#   So these were found with pure trial and error
+	var new_width = start_size.x * 1.7
+	var horizonal_shift = (new_width - start_size.x) * 4.5
+	start_true_button.set_size(Vector2(new_width, start_size.y))
+	var start_pos := start_visual_node.get_position()
+	var start_btn_pos := start_true_button.get_position()
+	start_btn_pos = Vector2(start_btn_pos.x - horizonal_shift, start_btn_pos.y)
+	start_true_button.set_position(start_btn_pos)
+	
+	var chat_vs_dealer_visual_node = start_visual_node.duplicate() as Label
+	chat_vs_dealer_visual_node.name = "button_chat vs dealer"
+	chat_vs_dealer_visual_node.set_text("CHAT VS DEALER")
+	main_options_select.add_child(chat_vs_dealer_visual_node)
+	var chat_vs_dealer_true_button := start_true_button.duplicate() as Button
+	main_options_select.add_child(chat_vs_dealer_true_button)
+	chat_vs_dealer_true_button.name = "true button_chat vs dealer"
+	var chat_vs_dealer_button_class := chat_vs_dealer_true_button.get_child(0) as ButtonClass
+	chat_vs_dealer_button_class.name = "button class_chat vs dealer"
+	chat_vs_dealer_button_class.ui = chat_vs_dealer_visual_node
+	chat_vs_dealer_button_class.alias = "chat vs dealer"
+	
+	var streamer_vs_chat_visual_node = start_visual_node.duplicate() as Label
+	streamer_vs_chat_visual_node.name = "button_streamer vs chat"
+	streamer_vs_chat_visual_node.set_text("STREAMER VS CHAT")
+	main_options_select.add_child(streamer_vs_chat_visual_node)
+	var streamer_vs_chat_true_button := start_true_button.duplicate() as Button
+	streamer_vs_chat_true_button.name = "true button_streamer vs chat"
+	main_options_select.add_child(streamer_vs_chat_true_button)
+	var streamer_vs_chat_button_class := streamer_vs_chat_true_button.get_child(0) as ButtonClass
+	streamer_vs_chat_button_class.name = "button class_streamer vs chat"
+	streamer_vs_chat_button_class.ui = streamer_vs_chat_visual_node
+	streamer_vs_chat_button_class.alias = "streamer vs chat"
+	
+	
+	var next_position := multiplayer_visual_node.get_position()
+	var y_diff := next_position.y - start_pos.y
+	
+	
+	var exit_pos := exit_visual_node.get_position()
+	exit_visual_node.set_position(Vector2(exit_pos.x, exit_pos.y + y_diff))
+	var credits_pos := credits_visual_node.get_position()
+	credits_visual_node.set_position(Vector2(credits_pos.x, credits_pos.y + y_diff))
+	var options_pos := options_visual_node.get_position()
+	options_visual_node.set_position(Vector2(options_pos.x, options_pos.y + y_diff))
+	var multiplayer_pos := multiplayer_visual_node.get_position()
+	multiplayer_visual_node.set_position(Vector2(multiplayer_pos.x, multiplayer_pos.y + y_diff))
+	streamer_vs_chat_visual_node.set_position(Vector2(start_pos.x, start_pos.y + y_diff))
+	chat_vs_dealer_visual_node.set_position(Vector2(start_pos.x, start_pos.y))
+	start_visual_node.set_position(Vector2(start_pos.x, start_pos.y - y_diff))
+	
+	var exit_btn_pos := exit_true_button.get_position()
+	exit_true_button.set_position(Vector2(exit_btn_pos.x, exit_btn_pos.y + y_diff))
+	var credits_btn_pos := credits_true_button.get_position()
+	credits_true_button.set_position(Vector2(credits_btn_pos.x, credits_btn_pos.y + y_diff))
+	var options_btn_pos := options_true_button.get_position()
+	options_true_button.set_position(Vector2(options_btn_pos.x, options_btn_pos.y + y_diff))
+	var multiplayer_btn_pos := multiplayer_true_button.get_position()
+	multiplayer_true_button.set_position(Vector2(multiplayer_btn_pos.x, multiplayer_btn_pos.y + y_diff))
+	streamer_vs_chat_true_button.set_position(Vector2(start_btn_pos.x, start_btn_pos.y + y_diff))
+	chat_vs_dealer_true_button.set_position(Vector2(start_btn_pos.x, start_btn_pos.y))
+	start_true_button.set_position(Vector2(start_btn_pos.x, start_btn_pos.y - y_diff))
+	
+	# Again, I wish there was a better way of settings these but I just had to use trial and error
+	var chat_vs_dealer_size = chat_vs_dealer_true_button.get_size()
+	chat_vs_dealer_size = Vector2(chat_vs_dealer_size.x * 1.1, chat_vs_dealer_size.y)
+	chat_vs_dealer_true_button.set_size(chat_vs_dealer_size)
+	var chat_vs_dealer_pos = chat_vs_dealer_true_button.get_position()
+	chat_vs_dealer_pos = Vector2(chat_vs_dealer_pos.x - 10, chat_vs_dealer_pos.y)
+	chat_vs_dealer_true_button.set_position(chat_vs_dealer_pos)
+	var streamer_vs_chat_size = streamer_vs_chat_true_button.get_size()
+	streamer_vs_chat_size = Vector2(streamer_vs_chat_size.x * 1.2, streamer_vs_chat_size.y)
+	streamer_vs_chat_true_button.set_size(streamer_vs_chat_size)
+	var streamer_vs_chat_pos = streamer_vs_chat_true_button.get_position()
+	streamer_vs_chat_pos = Vector2(streamer_vs_chat_pos.x - 20, streamer_vs_chat_pos.y)
+	streamer_vs_chat_true_button.set_position(streamer_vs_chat_pos)
+	
+	
+	start_true_button.focus_neighbor_bottom = chat_vs_dealer_true_button.get_path()
+	chat_vs_dealer_true_button.focus_neighbor_top = start_true_button.get_path()
+	chat_vs_dealer_true_button.focus_neighbor_bottom = streamer_vs_chat_true_button.get_path()
+	streamer_vs_chat_true_button.focus_neighbor_top = chat_vs_dealer_true_button.get_path()
+	streamer_vs_chat_true_button.focus_neighbor_bottom = multiplayer_true_button.get_path()
+	
+	start_button_class.connect("is_pressed", _StartVanilla)
+	chat_vs_dealer_button_class.connect("is_pressed", _StartChatVsDealer)
+	streamer_vs_chat_button_class.connect("is_pressed", _StartStreamerVsChat)
+	
+	menu_manager.buttons.append(chat_vs_dealer_true_button)
+	menu_manager.buttons.append(streamer_vs_chat_true_button)
+	
+	ModLoaderLog.info("Finished injecting new main menu options", LOGNAME)
+	
+	
 func inject_chat_plays_option() -> void:
 	ModLoaderLog.info("Modifying options menu to include Chat Plays choice", LOGNAME)
 	var controller_option_visual_node = sub_options_select.find_child("button_controller") as Label
@@ -162,7 +294,7 @@ func inject_chat_plays_option() -> void:
 	# Add button to list so its emit can be handled
 	menu_manager.buttons.append(chatplays_button_class_node)
 	chatplays_button_class_node.connect("is_pressed", open_chat_plays_settings_menu)
-	ModLoaderLog.info("Finished injecting new menu option", LOGNAME)
+	ModLoaderLog.info("Finished injecting new option menu option", LOGNAME)
 
 func create_chat_plays_menu(current_scene: Node) -> void:
 	ModLoaderLog.info("Adding Chat Plays configuration menu", LOGNAME)
@@ -281,7 +413,8 @@ func play_press_sound() -> void:
 	press_snd.play()
 
 func BotAuthStatusChanged(authorized: bool) -> void:
-	botIsAuthorizedCheckbox.set_pressed_no_signal(authorized)
+	if is_instance_valid(botIsAuthorizedCheckbox):
+		botIsAuthorizedCheckbox.set_pressed_no_signal(authorized)
 
 func BotBeginAuth():
 	bot.StartAuthFlow()
@@ -304,3 +437,14 @@ func save_settings() -> void:
 		ModLoaderConfig.set_current_config(new_config)
 		
 	# TODO: Send notification that save was successful
+
+func _StartVanilla() -> void:
+	mod_main.game_mode = ChatPlaysModMain.GAME_MODE.VANILLA
+
+func _StartChatVsDealer() -> void:
+	mod_main.game_mode = ChatPlaysModMain.GAME_MODE.CHAT_VS_DEALER
+	menu_manager.Start()
+
+func _StartStreamerVsChat() -> void:
+	mod_main.game_mode = ChatPlaysModMain.GAME_MODE.STREAMER_VS_CHAT
+	menu_manager.Start()

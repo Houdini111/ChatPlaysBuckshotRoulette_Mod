@@ -6,6 +6,8 @@ const GameRunner = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoul
 
 var game_runner: GameRunner
 
+var enabled := false
+
 func _init(_game_runner: GameRunner):
 	self.game_runner = _game_runner
 	ModLoaderMod.add_hook(SetupDeskUI, HOOK_TARGET, "SetupDeskUI")
@@ -13,8 +15,10 @@ func _init(_game_runner: GameRunner):
 
 func SetupDeskUI(chain: ModLoaderHookChain):
 	await chain.execute_next_async()
-	game_runner.StartPlayerTurn()
+	if enabled:
+		game_runner.StartPlayerTurn()
 
 func BeginScoreLerp(chain: ModLoaderHookChain):
 	await chain.execute_next_async()
-	game_runner.HandleDoubleOrNothing()
+	if enabled:
+		game_runner.HandleDoubleOrNothing()

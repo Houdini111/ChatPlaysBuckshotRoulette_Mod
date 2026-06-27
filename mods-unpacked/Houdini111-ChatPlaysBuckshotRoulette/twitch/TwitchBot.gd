@@ -32,6 +32,9 @@ var instructions_message_cooldown: float
 var connection_error_shown := false
 var connection_error_status_message_id: int
 
+var enabled: bool = false
+var bot_connected: bool = false
+
 # TODO: Add silent bot option
 
 func _init(_mod_main: ChatPlaysModMain):
@@ -64,11 +67,26 @@ func _init(_mod_main: ChatPlaysModMain):
 	ui_update_timer.timeout.connect(_UpdateLeaderboards)
 	vote_ui.z_index = 100
 	
-	ListenToAuthStatus(TryStartBotIfAuthSuccess)
+	ListenToAuthStatus(ShowAuthSuccessMessage)
+
+func Disable() -> void:
+	self.enabled = false
+	self.vote_ui.Disable()
+	self.ui_update_timer.paused = true
+	# TODO: Disconnect bot chat interface
+	# TODO: Make bot only connect after choosing a chat mode? But auth first to make sure it can.
+	# TODO: Disable chat plays mode buttons if bot isn't authenticated
+
+func Enable() -> void:
+	self.enabled = true
+	self.vote_ui.Enable()
+	self.ui_update_timer.paused = false
 
 func _ready():
 	ModLoader.current_config_changed.connect(_ConfigUpdated)
 	await self.auth.VerifyAuthentication(true)
+	if IsAuthorized():
+		_PrepareChatbotData()
 
 func _process(delta):
 	if instructions_message_cooldown > 0:
@@ -83,14 +101,13 @@ func IsAuthorized() -> bool:
 func ListenToAuthStatus(listener: Callable):
 	self.auth.ListenToAuthStatus(listener)
 
-func TryStartBotIfAuthSuccess(success: bool):
-	ModLoaderLog.info("Trying to start bot. Auth success: %s" % success, LOGNAME)
+func ShowAuthSuccessMessage(success: bool):
+	ModLoaderLog.info("Auth success: %s" % success, LOGNAME)
 	if success:
 		if connection_error_shown:
 			status_messages.RemoveMessage(connection_error_status_message_id)
 			connection_error_shown = false
-			status_messages.ShowMessageForTime("Bot successfully authorized. Connecting now", 7)
-		StartChatbot()
+			status_messages.ShowMessageForTime("Bot successfully authorized", 7)
 	else:
 		connection_error_status_message_id = status_messages.ShowMessageForever("Bot failed to authenticate with Twitch. Please reauthenticate")
 		connection_error_shown = true
@@ -101,8 +118,16 @@ func HandleSceneChange(scene_name: String):
 	#  If we're changing away from main then actions are no longer available.
 	if vote_counter.action_voting_open:
 		self.CloseActionVotingAndGetResults(true)
+	if enabled:
+		if scene_name == "main":
+			if IsAuthorized():
+				ConnectChatListener()
+		else:
+			pass
+			# TODO: Stop showing vote_ui
+			# TODO: Stop taking votes
 
-func StartChatbot():
+func _PrepareChatbotData():
 	ModLoaderLog.info("Attempting to start Twitch chatbot", LOGNAME)
 	if !IsAuthorized():
 		ModLoaderLog.error("Tried to start chatbot but was not authorized yet", LOGNAME)
@@ -122,9 +147,11 @@ func StartChatbot():
 			return
 		var target_channel_login = user_ids.keys()[0]
 		channel_user_id = user_ids.get(target_channel_login).get("id")
-	ModLoaderLog.info("Twitch bot authenticated. Can now send messages. Now trying to connect to websocket to listen to messages", LOGNAME)
+	ModLoaderLog.info("Twitch bot authenticated. Can now send messages.", LOGNAME)
+	status_messages.ShowMessageForTime("Bot successfully authenticated. Should be ready to go.", 10)
+
+func ConnectChatListener() -> void:
 	self.chat_interface.StartWebsocketClient(bot_user_id, channel_user_id)
-	# Wait for websocket connected before announcing success
 	
 func OpenActionVoting(voting_choices: Array[VotingChoice]):
 	var action_vote_period = mod_main.mod_data.current_config.data.get("actionVotePeriod")
@@ -159,7 +186,7 @@ func GetVotedName() -> String:
 	elif results.size() == 1:
 		winner = results[0]
 		ModLoaderLog.info("Name voting results had a winner of %s" %  winner, LOGNAME)
-		chat_interface.SendMessage("Winningx name vote: '%s'" % winner)
+		chat_interface.SendMessage("Winning name vote: '%s'" % winner)
 	vote_ui.ClearNameEntries()
 	return winner
 	
@@ -168,6 +195,7 @@ func _UpdateLeaderboards():
 	vote_ui.UpdateNameLeaderboard(self.vote_counter.GetNameLeaderboard())
 	
 func _WebsocketConnected(first_connection := true):
+	vote_ui.Enable()
 	vote_ui.ShowNameVoting()
 	# TODO: Make configurable ui update rate
 	# var ui_update_seconds = ModLoaderConfig.get_current_config(mod_main.MOD_ID).get("") 
@@ -180,7 +208,7 @@ func _WebsocketConnected(first_connection := true):
 	else: 
 		chat_interface.SendMessage("ChatPlaysBuckshotRoulette successfully reconnected")
 		status_messages.ShowMessageForTime("ChatPlaysBuckshotRoulette was disconnected but successfully reconnected", 10)
-	
+
 func _HandleMessage(message: String, from_user: String):
 	if (message.begins_with("!name ")):
 		_HandleNameVote(message, from_user)

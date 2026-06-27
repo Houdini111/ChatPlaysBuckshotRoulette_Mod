@@ -6,10 +6,20 @@ const Scripter = preload("res://mods-unpacked/Houdini111-ChatPlaysBuckshotRoulet
 
 var scripter: Scripter
 
+var enabled := false
+
 func _init(_scripter: Scripter):
-	ModLoaderMod.add_hook(AwaitPickup, HOOK_TARGET, "AwaitPickup")
 	self.scripter = _scripter
+	ModLoaderMod.add_hook(AwaitPickup, HOOK_TARGET, "AwaitPickup")
+	ModLoaderMod.add_hook(Input_Enter, HOOK_TARGET, "Input_Enter")
 
 func AwaitPickup(chain: ModLoaderHookChain):
 	await chain.execute_next_async()
-	scripter.PickupWaiverAndEnterName()
+	if enabled:
+		scripter.PickupWaiverAndEnterName()
+	
+func Input_Enter(chain: ModLoaderHookChain):
+	await chain.execute_next_async()
+	if enabled:
+		# TODO: Check to make sure name accepted. Don't want to fetch dealer name several times.
+		scripter.WaiverNameEntered()
